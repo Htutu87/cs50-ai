@@ -1,7 +1,7 @@
 import csv
 import sys
 
-from util import Node, StackFrontier, QueueFrontier
+from util import Node, StackFrontier, QueueFrontier, ExploredSet
 
 # Maps names to a set of corresponding person_ids
 names = {}
@@ -67,17 +67,17 @@ def main():
 
 
     # Entrada do ator inicial (Estado inicial).
-    source = person_id_for_name(input("Name: "))
-    if source is None:
+    initialState = person_id_for_name(input("Name: "))
+    if initialState is None:
         sys.exit("Person not found.")
     # Entrada do ator final (Estado final).
-    target = person_id_for_name(input("Name: "))
-    if target is None:
+    finalState = person_id_for_name(input("Name: "))
+    if finalState is None:
         sys.exit("Person not found.")
 
     # Função que vou implementar com o algoritmo BFS.
     # Ela tem que receber uma lista de nós
-    path = shortest_path(source, target)
+    path = shortest_path(initialState, finalState)
 
     if path is None:
         print("Not connected.")
@@ -108,7 +108,7 @@ def main():
     else:
         degrees = len(path)
         print(f"{degrees} degrees of separation.")
-        path = [(None, source)] + path
+        path = [(None, initialState)] + path
         for i in range(degrees):
             person1 = people[path[i][1]]["name"]
             person2 = people[path[i + 1][1]]["name"]
@@ -120,27 +120,62 @@ def main():
 # Chamar por frontier.frontier retorna uma lista contendo os nós na fronteira.
 
 
-def shortest_path(source, target):
+def shortest_path(initialState, finalState):
     """
     Returns the shortest list of (movie_id, person_id) pairs
     that connect the source to the target.
 
     If no possible path, returns None.
     """
-    startNode = Node(state = source, parent = None, action = None)
+    # Resposta: Tenho que trabalhar dentro da função path com nós, pois os métodos
+    # da fronteira tratam nós. Preciso dos nós também por que eles contém a informação
+    # do próprio pai, que usarei depois para rastrear o caminho de volta para o inicio,
+    # criando a estrutura de dados path.
+
+    node = Node(state = initialState, parent = None, action = None)
+
     frontier = QueueFrontier()
-    frontier.add(startNode)
-    if startNode.state == source: # Comparação válida: Ambas são ID
-        return frontier.frontier
+    frontier.add(node)
+    exploredSet = ExploredSet()
 
-    # Dentro do Loop
-    # while...
-    # Expandir o nó (Encontrar seus vizinhos)
-    neighbors = neighbors_for_person(startNode.state)
-    print(neighbors)
+    print("FRONTIER:")
+    print(people[node.state]["name"])
 
-    # TODO
-    #raise NotImplementedError
+    while True:
+
+        node = frontier.frontier[0]
+        person = people[node.state]["name"]
+        print(f"Evaluated Node: {person}")
+
+        if node.state == finalState:
+            print("\nConnected!\n")
+            
+            path = []
+
+            while node.parent != None:
+                path = [people[node.state]["name"]] + path
+                node = node.parent;
+
+
+
+            print ("PATH: ")
+            print(path)
+            return []
+
+        neighborhood = neighbors_for_person(node.state)
+        parentNode = node
+        person1 = people[parentNode.state]["name"]
+
+        for neighbor in neighborhood:
+            node = Node(state = neighbor[1], parent = parentNode, action = neighbor[0])
+            if not exploredSet.contains_state(node.state):
+                frontier.add(node)
+
+                person2 = people[node.state]["name"]
+                print(f"{person2} is a neighbor of {person1}")
+
+        frontier.remove()
+        exploredSet.add(parentNode)
 
 
 def person_id_for_name(name):

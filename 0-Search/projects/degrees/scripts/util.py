@@ -48,7 +48,7 @@ class StackFrontier():
 
     # Retira o último nó da fronteira.
     def remove(self):
-        if self.empty():
+        if self.isEmpty():
             raise Exception("empty frontier")
         else:
             node = self.frontier[-1]
@@ -60,9 +60,20 @@ class QueueFrontier(StackFrontier):
 
     # Retira o primeiro nó da fronteira
     def remove(self):
-        if self.empty():
+        if self.isEmpty():
             raise Exception("empty frontier")
         else:
             node = self.frontier[0]
             self.frontier = self.frontier[1:]
             return node
+
+class ExploredSet():
+        
+        def __init__(self):
+            self.set = []
+
+        def add(self, node):
+            self.set.append(node)
+
+        def contains_state(self, state):
+            return any(node.state == state for node in self.set)

@@ -5,7 +5,6 @@ class Node():
         self.state = state
         self.parent = parent
         self.action = action
-        self.name = "Artur"
 
 class StackFrontier():
     def __init__(self):
