@@ -104,10 +104,6 @@ def shortest_path(initialState, finalState):
 
     If no possible path, returns None.
     """
-    # Resposta: Tenho que trabalhar dentro da função path com nós, pois os métodos
-    # da fronteira tratam nós. Preciso dos nós também por que eles contém a informação
-    # do próprio pai, que usarei depois para rastrear o caminho de volta para o inicio,
-    # criando a estrutura de dados path.
 
     node = Node(state = initialState, parent = None, action = None)
 
@@ -117,20 +113,26 @@ def shortest_path(initialState, finalState):
 
     while True:
 
+        if len(frontier.frontier) == 0:
+            return []        
+
         node = frontier.frontier[0]
+
+        ''' DEBUG
         person = people[node.state]["name"]
-        print(f"Evaluated Node: {person}")
+        print("\n---------------------------")
+        print(f"Current evaluated node: {person}")
+        '''
 
         if node.state == finalState:
-            print("\nConnected!\n")
+
+            #DEBUG print("\nConnected!\n")
             
             path = []
 
             while node.parent != None:
                 path = [(node.action, node.state)] + path
-                node = node.parent;
-            
-            print(path)
+                node = node.parent
 
             return path
 
@@ -138,8 +140,11 @@ def shortest_path(initialState, finalState):
         parentNode = node
         parentStateName = people[parentNode.state]["name"]
 
-        print("PARENT NODE:")
+        ''' DEBUG
+        print("\n\tNEIGHBORHOOOD:\n")
+        print("Parent Node: ", end="")
         print(people[node.state]["name"])
+        '''
 
         for neighbor in neighborhood:
             
@@ -150,7 +155,7 @@ def shortest_path(initialState, finalState):
                 frontier.add(node)
                     
                 stateName = people[node.state]["name"]
-                print(f"{stateName} is a neighbor of {parentStateName}")
+                #DEBUG print(f"{stateName} is a neighbor of {parentStateName}")
                 
             
         if not exploredSet.contains_state(parentNode.state):
@@ -158,21 +163,24 @@ def shortest_path(initialState, finalState):
             exploredSet.add(parentNode)
         
         frontier.remove()
-        
-        print("\n FRONTIER: \n")
+
+
+        ''' DEBUG
+        print("\n\tFRONTIER: \n")
 
         for j in frontier.frontier:
             print(people[j.state]["name"])
         print("\n")
 
-        print("\n EXPLORED SET: \n")
+        print("\tEXPLORED SET:\n")
 
         for i in exploredSet.set:
             print(people[i.state]["name"])
         print("\n")
 
-        if input("Aperta \"a\": ") != 'a':
+        if input("Press \"n\" to continue: ") != 'n':
             return []
+        '''
 
 
 
