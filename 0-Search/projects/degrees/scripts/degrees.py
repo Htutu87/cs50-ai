@@ -76,10 +76,35 @@ def main():
         sys.exit("Person not found.")
 
     # Função que vou implementar com o algoritmo BFS.
+    # Ela tem que receber uma lista de nós
     path = shortest_path(source, target)
 
     if path is None:
         print("Not connected.")
+
+    #-------------------------------------------------
+    # CUIDADO: Minha implementação para a identificação
+    # de igualdade entre ator inicial e final se baseia na
+    # avaliação do comprimento da lista path (Se for igual a 1
+    # ele considera que houve essa repetição). Pode ser que,
+    # uma vez implementado o BFS, essa condição ocorra mesmo
+    # para estados inicial e final distintos. Ficar atento a isso.
+    # Implementei dessa forma pois a main() implementada apresentava
+    # um SegFault quando encontrava essa ocasião. A implementação
+    # da main precisa sempre acessar a posição i+1 de path.
+    # Poderia ter sido uma opção implementar uma variável chamada
+    # "extremosCoincidem", de valor 0 ou 1, e adicioná-la a i, 
+    # dessa forma inalterando a implementação e saída de dados
+    # original.
+    #-------------------------------------------------
+
+    elif len(path) == 1:
+        degrees = 0
+        print("Initial actor and target actor are the same.")
+        print(f"{degrees} degrees of separation.")
+        person = people[path[0].state]["name"]
+        print(f"{person} starred all his movies with himself.")
+
     else:
         degrees = len(path)
         print(f"{degrees} degrees of separation.")
@@ -91,6 +116,10 @@ def main():
             print(f"{i + 1}: {person1} and {person2} starred in {movie}")
 
 
+# Chamar por frontier retorna um objeto da classe QueueFrontier.
+# Chamar por frontier.frontier retorna uma lista contendo os nós na fronteira.
+
+
 def shortest_path(source, target):
     """
     Returns the shortest list of (movie_id, person_id) pairs
@@ -98,9 +127,20 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
+    startNode = Node(state = source, parent = None, action = None)
+    frontier = QueueFrontier()
+    frontier.add(startNode)
+    if startNode.state == source: # Comparação válida: Ambas são ID
+        return frontier.frontier
+
+    # Dentro do Loop
+    # while...
+    # Expandir o nó (Encontrar seus vizinhos)
+    neighbors = neighbors_for_person(startNode.state)
+    print(neighbors)
 
     # TODO
-    raise NotImplementedError
+    #raise NotImplementedError
 
 
 def person_id_for_name(name):
