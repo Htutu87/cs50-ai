@@ -82,29 +82,6 @@ def main():
     if path is None:
         print("Not connected.")
 
-    #-------------------------------------------------
-    # CUIDADO: Minha implementação para a identificação
-    # de igualdade entre ator inicial e final se baseia na
-    # avaliação do comprimento da lista path (Se for igual a 1
-    # ele considera que houve essa repetição). Pode ser que,
-    # uma vez implementado o BFS, essa condição ocorra mesmo
-    # para estados inicial e final distintos. Ficar atento a isso.
-    # Implementei dessa forma pois a main() implementada apresentava
-    # um SegFault quando encontrava essa ocasião. A implementação
-    # da main precisa sempre acessar a posição i+1 de path.
-    # Poderia ter sido uma opção implementar uma variável chamada
-    # "extremosCoincidem", de valor 0 ou 1, e adicioná-la a i, 
-    # dessa forma inalterando a implementação e saída de dados
-    # original.
-    #-------------------------------------------------
-
-    elif len(path) == 1:
-        degrees = 0
-        print("Initial actor and target actor are the same.")
-        print(f"{degrees} degrees of separation.")
-        person = people[path[0].state]["name"]
-        print(f"{person} starred all his movies with himself.")
-
     else:
         degrees = len(path)
         print(f"{degrees} degrees of separation.")
@@ -138,9 +115,6 @@ def shortest_path(initialState, finalState):
     frontier.add(node)
     exploredSet = ExploredSet()
 
-    print("FRONTIER:")
-    print(people[node.state]["name"])
-
     while True:
 
         node = frontier.frontier[0]
@@ -153,29 +127,53 @@ def shortest_path(initialState, finalState):
             path = []
 
             while node.parent != None:
-                path = [people[node.state]["name"]] + path
+                path = [(node.action, node.state)] + path
                 node = node.parent;
-
-
-
-            print ("PATH: ")
+            
             print(path)
-            return []
+
+            return path
 
         neighborhood = neighbors_for_person(node.state)
         parentNode = node
-        person1 = people[parentNode.state]["name"]
+        parentStateName = people[parentNode.state]["name"]
+
+        print("PARENT NODE:")
+        print(people[node.state]["name"])
 
         for neighbor in neighborhood:
+            
             node = Node(state = neighbor[1], parent = parentNode, action = neighbor[0])
-            if not exploredSet.contains_state(node.state):
+            
+            if not exploredSet.contains_state(node.state) and not frontier.contains_state(node.state):
+                
                 frontier.add(node)
-
-                person2 = people[node.state]["name"]
-                print(f"{person2} is a neighbor of {person1}")
-
+                    
+                stateName = people[node.state]["name"]
+                print(f"{stateName} is a neighbor of {parentStateName}")
+                
+            
+        if not exploredSet.contains_state(parentNode.state):
+            
+            exploredSet.add(parentNode)
+        
         frontier.remove()
-        exploredSet.add(parentNode)
+        
+        print("\n FRONTIER: \n")
+
+        for j in frontier.frontier:
+            print(people[j.state]["name"])
+        print("\n")
+
+        print("\n EXPLORED SET: \n")
+
+        for i in exploredSet.set:
+            print(people[i.state]["name"])
+        print("\n")
+
+        if input("Aperta \"a\": ") != 'a':
+            return []
+
 
 
 def person_id_for_name(name):
