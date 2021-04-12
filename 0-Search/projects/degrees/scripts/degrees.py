@@ -55,9 +55,7 @@ def load_data(directory):
 def main():
     if len(sys.argv) > 2:
         sys.exit("Usage: python degrees.py [directory]")
-    # O diretório acessado para obter os dados depende do argumento dado na CLI
-    # No caso de omissão, ele acessa diretamento o diretório large/. Caso queiramos
-    # Acessar os dados de small/ devemos especificar através do argv.
+
     directory = sys.argv[1] if len(sys.argv) == 2 else "large"
 
     # Load data from files into memory
@@ -66,17 +64,15 @@ def main():
     print("Data loaded.")
 
 
-    # Entrada do ator inicial (Estado inicial).
     initialState = person_id_for_name(input("Name: "))
     if initialState is None:
         sys.exit("Person not found.")
-    # Entrada do ator final (Estado final).
+
     finalState = person_id_for_name(input("Name: "))
+
     if finalState is None:
         sys.exit("Person not found.")
 
-    # Função que vou implementar com o algoritmo BFS.
-    # Ela tem que receber uma lista de nós
     path = shortest_path(initialState, finalState)
 
     if path is None:
@@ -92,10 +88,7 @@ def main():
             movie = movies[path[i + 1][0]]["title"]
             print(f"{i + 1}: {person1} and {person2} starred in {movie}")
 
-
-# Chamar por frontier retorna um objeto da classe QueueFrontier.
-# Chamar por frontier.frontier retorna uma lista contendo os nós na fronteira.
-
+# My implementation was the function below:
 
 def shortest_path(initialState, finalState):
     """
@@ -118,11 +111,11 @@ def shortest_path(initialState, finalState):
 
         node = frontier.frontier[0]
 
-        ''' DEBUG
+        """ DEBUG
         person = people[node.state]["name"]
         print("\n---------------------------")
         print(f"Current evaluated node: {person}")
-        '''
+        """
 
         if node.state == finalState:
 
@@ -140,11 +133,11 @@ def shortest_path(initialState, finalState):
         parentNode = node
         parentStateName = people[parentNode.state]["name"]
 
-        ''' DEBUG
+        """ DEBUG
         print("\n\tNEIGHBORHOOOD:\n")
         print("Parent Node: ", end="")
         print(people[node.state]["name"])
-        '''
+        """
 
         for neighbor in neighborhood:
             
@@ -165,7 +158,7 @@ def shortest_path(initialState, finalState):
         frontier.remove()
 
 
-        ''' DEBUG
+        """ DEBUG
         print("\n\tFRONTIER: \n")
 
         for j in frontier.frontier:
@@ -180,7 +173,7 @@ def shortest_path(initialState, finalState):
 
         if input("Press \"n\" to continue: ") != 'n':
             return []
-        '''
+        """     
 
 
 
